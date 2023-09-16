@@ -878,7 +878,7 @@ if (condition1 && condition2) {
 }
 ```
 
-### Optional Chaining
+## Optional Chaining
 옵셔널 체이닝(?.)은 객체의 속성에 접근할 때, 해당 속성이나 중간 체인에 null이나 undefined가 있으면 오류를 발생시키지 않고 undefined를 반환해주는 연산자이다.
 
 ```javascript
