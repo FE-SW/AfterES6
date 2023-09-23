@@ -1167,7 +1167,7 @@ console.log(fib.next().value);  // 5
 #### yield 사용
 yield*를 사용하여 다른 제너레이터나 반복 가능한 객체를 위임하는 예시코드
 
-```
+```javascript
 function* numbers() {
     yield 1;
     yield 2;
