@@ -1123,3 +1123,135 @@ console.log(instance.privateField) // undefined
 console.log(instance.getPrivateField()); // 42
 
 ```
+
+## Generator
+제너레이터 함수는 함수 실행의 중간에 멈췄다가 필요할 때 다시 시작할 수 있는 기능을 제공하는 함수이다. 일반 함수의 가장 큰 차이점은 제너레이터 함수가 함수의 실행을 일시 중지하고 나중에 다시 시작할 수 있다는 것이다. 이로 인해 비동기 프로그래밍, 반복 가능한 객체 생성, 무한한 데이터 스트림 처리 등 다양한 상황에서 유용하게 사용된다.
+
+### 제너레이터 함수
+* 정의: 제너레이터 함수는 function* 키워드를 사용하여 정의한다.
+* Yield: 제너레이터 함수 내부에서 yield 키워드를 사용하여 함수의 실행을 중간에 멈추고 값을 반환할 수 있다.
+* Return: 제너레이터 함수는 return 문도 포함할 수 있으며, return이 호출되면 그 시점에서 제너레이터 함수의 실행이 완료된다.
+
+### 제너레이터의 메서드
+* next(): 제너레이터 객체의 next() 메서드를 호출하면 함수가 다음 yield까지 실행되거나 함수의 끝까지 실행된다. 이 메서드는 { value: any, done: boolean } 형태의 객체를 반환한다.
+* return(): 제너레이터를 강제로 종료하고 주어진 값을 반환한다.
+* throw(): 제너레이터 내부로 오류를 던진다. 해당 제너레이터 함수 내부에 해당 오류를 처리하는 로직이 없으면 제너레이터는 즉시 종료된다.
+
+### 기존 함수와의 차이점:
+* 실행 흐름 제어: 일반 함수는 호출될 때 실행되고 종료되지만 제너레이터 함수는 여러 번 호출될 수 있으며 각 호출 사이에 실행 상태를 유지한다
+* Lazy Evaluation: 제너레이터는 필요한 시점에 값을 생성한다. 이는 특히 큰 데이터 세트를 처리할 때 메모리를 절약하는 데 도움이 된다.
+* 정의 방식: 제너레이터 함수는 function* 키워드를 사용하여 정의한다.
+* 반환 값: 일반 함수는 값을 반환하지만 제너레이터 함수는 항상 제너레이터 객체를 반환한다.
+
+#### 예시코드
+제너레이터를 사용한 간단한 피보나치함수 코드
+
+```javascript
+function* fibonacciGenerator() {
+    let [prev, curr] = [0, 1];
+    while (true) {
+        yield curr;  // 현재 값을 반환하고 실행을 중지
+        [prev, curr] = [curr, prev + curr];
+    }
+}
+
+const fib = fibonacciGenerator();
+
+console.log(fib.next().value);  // 1
+console.log(fib.next().value);  // 1
+console.log(fib.next().value);  // 2
+console.log(fib.next().value);  // 3
+console.log(fib.next().value);  // 5
+```
+
+#### yield 사용
+yield*를 사용하여 다른 제너레이터나 반복 가능한 객체를 위임하는 예시코드
+
+```
+function* numbers() {
+    yield 1;
+    yield 2;
+    return 3;
+}
+
+function* numbersAndLetters() {
+    const result = yield* numbers();  // numbers 제너레이터를 위임
+    yield 'A';
+    yield 'B';
+    yield result;
+}
+
+const gen = numbersAndLetters();
+
+console.log(gen.next().value);  // 1
+console.log(gen.next().value);  // 2
+console.log(gen.next().value);  // A
+console.log(gen.next().value);  // B
+console.log(gen.next().value);  // 3
+```
+
+#### redux-saga
+Redux-Saga에서 제너레이터 함수와 몇 가지 helper 함수들을 사용하여 비동기 로직을 구성하게 된다.
+
+1.초기 상태와 액션 타입들을 정의
+```javascript
+const initialState = {
+  posts: [],
+  loading: false,
+  error: null
+};
+
+const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST';
+const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS';
+const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE';
+```
+
+2.리듀서를 작성하여 각 액션에 따른 상태 변화를 정의
+```javascript
+function postsReducer(state = initialState, action) {
+  switch (action.type) {
+    case FETCH_POSTS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null
+      };
+    case FETCH_POSTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        posts: action.payload
+      };
+    case FETCH_POSTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload
+      };
+    default:
+      return state;
+  }
+}
+```
+
+3. API 호출을 처리하는 제너레이터 함수를 작성
+```javascript
+function* fetchPostsSaga() {
+    try {
+        const response = yield call(fetchPostsApi);
+        yield put({ type: 'FETCH_POSTS_SUCCESS', payload: response.data });
+    } catch (error) {
+        yield put({ type: 'FETCH_POSTS_FAILURE', payload: error });
+    }
+}
+```
+
+4. 최상위 제너레이터 함수에서 이 saga를 특정 액션에 연결
+```javascript
+function* rootSaga() {
+    yield takeEvery('FETCH_POSTS_REQUEST', fetchPostsSaga);
+}
+```
+
+#### 참고
+* https://redux-saga.js.org/docs/api/#effect-creators
