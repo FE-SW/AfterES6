@@ -656,6 +656,7 @@ Promise.any([promise1, promise2, promise3])
   .catch((error) => console.log(error));
 ```
 
+#### 정리
 
 | 메서드               | 설명                                                                 | 성공 조건                                      | 실패 조건                                      | 사용 사례                                                                 |
 |----------------------|----------------------------------------------------------------------|------------------------------------------------|------------------------------------------------|--------------------------------------------------------------------------|
@@ -721,15 +722,6 @@ async function main() {
 main();
 ```
 
-## s(dotAll) 플래그
-s(dotAll) 플래그는 정규식에서 점(.) 메타문자가 개행 문자도 인식할 수 있게 해준다. 기존에는 점(.)이 개행 문자를 인식하지 못했기 때문에 여러 줄의 문자열을 매칭할 때 제약이 있었다.
-
-```javascript
-/foo.bar/.test('foo\nbar'); // false
-
-/foo.bar/s.test('foo\nbar'); // true
-```
-
 ## Array.prototype.methods
 
 ### Array.prototype.flat()  
@@ -744,6 +736,14 @@ console.log(flatArr1); // [1, 2, [3, [4]], 5]
 // ES2019에서 추가된 코드
 var arr2 = [1, [2, [3, [4]], 5]];
 console.log(arr2.flat(1)); // [1, 2, [3, [4]], 5]
+
+
+var arr4 = [1, [2, [3, [4]], 5]];
+
+// flat 메서드를 사용하여 모든 중첩 배열을 평탄화
+var flattened = arr4.flat(Infinity);
+
+console.log(flattened); //[1,2,3,4,5]
 ```
 
 ### Array.prototype.flatMap()
