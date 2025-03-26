@@ -3,13 +3,10 @@
 
 ## Variable
 
-es5까지 변수를 담는 키워드는 var뿐이였지만 호이스팅과 스코프관련하여 문제점이 많아 es6에 let과 const가 추가되었다.<br/>
-각각의 키워드의 차이점은 다음과 같다.
-
 ### 1.var
 * 함수 레벨 스코프: var로 선언된 변수는 함수 레벨 스코프를 가지며, 함수 외부에서 선언된 경우 전역 변수가 된다.<br/>
 * 호이스팅: 변수가 선언된 위치와 상관 없이 참조,호출을 해도 참조에러가 발생하지 않는다.(선언,할당 동시화)<br/>
-* 재선언 가능: 동일한 스코프 내에서 var로 선언된 변수를 재선언할 수 있습니다.<br/>
+* 재선언 가능: 동일한 스코프 내에서 var로 선언된 변수를 재선언할 수 있다.<br/>
 
 ```javascript
 function example() {
@@ -106,7 +103,10 @@ resConst[2](); // 출력: 2
 기존 함수(함수 선언, 함수 표현)과 화살표 함수(arrow function)의 주요 차이점은 this의 바인딩 방식, arguments 객체의 유무, 그리고 문법적인 간결함이다.
 
 ### this 바인딩
+* 동적 this: 기존 함수에서는 this가 함수가 호출되는 방식에 따라 동적으로 바인딩된다. 즉, 함수가 호출되는 컨텍스트에 따라 this가 달라질 수 있다.
 ```javascript
+//getValue가 독립적인 함수로 호출될 때, this는 normalInstance에 바인딩되지 않아서 undefined가 출력
+
 //일반함수
 function NormalFunction() {
   this.value = 42;
@@ -121,6 +121,7 @@ console.log(normalInstance.getValue()); // 출력: 42
 const getValue = normalInstance.getValue;
 console.log(getValue()); // 출력: undefined (or Error in strict mode)
 ```
+* 렉시컬 this: 화살표 함수는 자체적인 this 컨텍스트를 가지지 않는다. 대신, 정의될 때의 외부 스코프에서 this를 상속받는다. 즉, 화살표 함수 내부의 this는 화살표 함수가 정의된 위치의 this와 동일하다.
 ```javascript
 //화살표함수
 function ArrowFunction() {
@@ -157,7 +158,6 @@ arrowFunction(1, 2, 3); // 출력: Error - arguments is not defined
 
 ```
 
-#### arguments 
 arguments 객체는 함수 내부에서 접근 가능한 지역 변수로, 해당 함수에 전달된 모든 인수를 담고 있는 유사 배열 객체이다.
 
 ### 문법적 간결함
@@ -221,7 +221,8 @@ console.log(es6('영희', 22));// 출력 => 안녕 영희, 너의 나이는 22�
 
 ## Tagged Template Literals
 
-태그드 템플릿 리터럴은 템플릿 리터럴을 확장한 형태로, 템플릿 리터럴 앞에 함수 이름(태그)을 붙여 사용한다. 이 태그 함수는 템플릿 리터럴의 문자열과 표현식을 개별적인 인수로 받아 처리할 수 있어, 문자열 생성을 더욱 유연하고 강력하게 제어할 수 있다. 태그 함수를 이용해 문자열 생성 과정에 로직을 추가하거나 문자열 포맷팅 등 다양한 활용이 가능하다.
+태그드 템플릿 리터럴은 템플릿 리터럴을 확장한 형태로, 템플릿 리터럴 앞에 함수 이름(태그)을 붙여 사용한다. 이 태그 함수는 템플릿 리터럴의 고정된 문자열 부분과 삽입된 변수 또는 표현식을 개별적인 인수로 받아 처리할 수 있어, 문자열 생성을 더욱 유연하고 강력하게 제어할 수 있다. 태그 함수를 이용해 문자열 생성 과정에 로직을 추가하거나 문자열 포맷팅 등 다양한 활용이 가능하다.
+
 ```javascript
 function tagged(strings, ...values) {
   console.log(strings);
@@ -333,31 +334,27 @@ function printAll( ...args ) {   //배열형태로 파라미터가 전달 -> ['s
 
 "Destructuring"은 ES6에서 도입된 문법으로, 배열이나 객체의 속성을 해체하여 그 값을 개별 변수에 할당할 수 있는 JavaScript 표현식이다. 이를 통해 코드를 더욱 간결하고 가독성 좋게 작성할 수 있다.
 ```javascript
-function printAll( ...args ) {   //배열형태로 파라미터가 전달 -> ['seok' , 'woo' , 'jjang']
-  for(let i =0; i<args.length; i++){
-      console.log(arg[i]);
-  }
-  }
-  printAll('seok','woo','jjang')
-  // 출력:
-  // seok
-  // woo
-  // jjang
-  
-  // args.forEach((arg) => console.log(arg)) 또는
-  // for(const arg of args) {
-  //    console.log(arg);
-  // }
-  // 표현도 가능하다 
-  
-  function fun2(a, b ,...parameter){
-    console.log(parameter)
-  }
-  fun2(1,2,3,4,5,6,7); //[3,4,5,6,7]
-  
-  //function fun2(a, ...parameter, b){} //에러 :rest parameter는 항상 맨뒤에 써야됨
-  //function fun2(a, ...parameter, ...parameter2){} //에러:2개 이상 사용할 수 없습니다. 
+const fruits = ['apple', 'banana', 'cherry'];
+const [first, second, third] = fruits;
+
+const person = {
+  name: 'John',
+  age: 30,
+  city: 'New York'
+};
+
+const { name, age, city } = person;
+
+function displayPerson({ name, age }) {
+  console.log(`Name: ${name}, Age: ${age}`);
 }
+
+const personInfo = {
+  name: 'Alice',
+  age: 25
+};
+
+displayPerson(personInfo); 
 ```
 
 ### 주의점
@@ -398,7 +395,7 @@ const boundMethod = method.bind(obj);
 boundMethod(); // 출력: 42
 ```
 
-#### Function.prototype.bind를 사용하여 this 바인딩
+#### 화살표 함수 사용
 
 ```javascript
 const obj = {
@@ -446,8 +443,8 @@ loadModule();
 ```
 
 ### 네임스페이스:
-* ES Modules: ESM은 명시적인 네임스페이스를 갖고 있으며, 이름이 있는(named) 및 기본(default) export를 지원합니다.
-* CommonJS: 모든 exports는 단일 module.exports 객체에 추가됩니다.
+* ES Modules: ESM은 명시적인 네임스페이스를 갖고 있으며, 이름이 있는(named) 및 기본(default) export를 지원한다.
+* CommonJS: 모든 exports는 단일 module.exports 객체에 추가된다.
 
 ```javascript
 // ES Modules (명시적 네임스페이스)
@@ -557,15 +554,58 @@ Promise.all([promise1, promise2])
   .catch((error) => {
     console.error(error);
   });
+
+
+const getStringLengthAfterDelay = (inputString) => {
+  return new Promise((resolve, reject) => {
+    if (typeof inputString !== 'string') {
+      reject(new Error('Input must be a string'));
+    } else {
+      setTimeout(() => {
+        resolve(inputString.length);
+      }, 2000);
+    }
+  });
+}
+
+const getLengthsOfStringsAfterDelay = (stringsArray) => {
+  return Promise.all(stringsArray.map(getStringLengthAfterDelay));
+}
+
+const strings = ["Hello", "world", "JavaScript", "is", "awesome"];
+
+getLengthsOfStringsAfterDelay(strings)
+  .then(lengths => {
+    console.log(`문자열 길이 배열: [${lengths.join(', ')}]`);
+  })
+  .catch(error => {
+    console.error(error.message);
+  });
 ```
 
 ### Promise.allSettled:
 여러 개의 Promise를 병렬로 실행하고, 모든 Promise의 결과(성공 또는 실패)가 반환될 때까지 기다린다.
+모든 Promise가 완료될 때까지 기다린 후, 각 Promise의 결과를 객체 형태로 반환한다. 각 객체는 status와 value 또는 reason 속성을 가진다.
 
 ```javascript
 Promise.allSettled([promise1, promise2])
   .then((results) => {
     console.log(results); // [{status: 'fulfilled', value: result1}, {status: 'rejected', reason: error2}]
+  });
+
+const fetchUserData = () => Promise.resolve({ id: 1, name: 'Alice' });
+const fetchUserPosts = () => Promise.reject('Failed to fetch posts');
+const fetchUserComments = () => new Promise((resolve) => setTimeout(() => resolve(['Comment1', 'Comment2']), 1000));
+
+Promise.allSettled([fetchUserData(), fetchUserPosts(), fetchUserComments()])
+  .then((results) => {
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        console.log(`Request ${index + 1} succeeded with value:`, result.value);
+      } else {
+        console.log(`Request ${index + 1} failed with reason:`, result.reason);
+      }
+    });
   });
 ```
 
@@ -588,6 +628,19 @@ Promise.race([promise1, promise2])
     .catch((error) => {
         console.error(error);
     });
+
+
+const fetchFromServer1 = () => new Promise((resolve) => setTimeout(() => resolve('Data from server 1'), 500));
+const fetchFromServer2 = () => new Promise((resolve) => setTimeout(() => resolve('Data from server 2'), 300));
+const fetchFromServer3 = () => new Promise((resolve, reject) => setTimeout(() => reject('Server 3 failed'), 400));
+
+Promise.race([fetchFromServer1(), fetchFromServer2(), fetchFromServer3()])
+  .then((fastestData) => {
+    console.log(`Fastest response received: ${fastestData}`);
+  })
+  .catch((error) => {
+    console.error(`All requests failed with error: ${error}`);
+  });
 ```
 
 ### Promise.any:
@@ -603,7 +656,14 @@ Promise.any([promise1, promise2, promise3])
   .catch((error) => console.log(error));
 ```
 
-#### 참고: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
+| 메서드               | 설명                                                                 | 성공 조건                                      | 실패 조건                                      | 사용 사례                                                                 |
+|----------------------|----------------------------------------------------------------------|------------------------------------------------|------------------------------------------------|--------------------------------------------------------------------------|
+| `Promise.all`        | 모든 Promise가 성공해야 결과를 반환.                           | 모든 Promise가 성공하면 결과 배열 반환          | 하나라도 실패하면 즉시 에러 반환                | 여러 비동기 작업이 모두 성공해야 할 때                                    |
+| `Promise.allSettled` | 모든 Promise의 완료 상태를 기다리고, 각각의 결과를 객체로 반환. | 모든 Promise의 완료 상태를 객체로 반환          | 실패한 Promise도 결과 객체로 반환               | 각 Promise의 성공/실패 상태를 개별적으로 처리해야 할 때                   |
+| `Promise.race`       | 가장 먼저 완료되는 Promise의 결과를 반환.                      | 가장 먼저 완료된 Promise의 결과 반환            | 가장 먼저 완료된 Promise가 실패하면 에러 반환   | 여러 데이터 소스 중 가장 빠른 응답을 사용해야 할 때                       |
+| `Promise.any`        | 하나라도 성공하면 그 결과를 반환. 모든 Promise가 실패하면 에러 반환 | 하나라도 성공하면 그 결과 반환                  | 모든 Promise가 실패하면 `AggregateError` 반환   | 여러 데이터 소스 중 하나라도 성공하면 되는 경우                           |
+
 
 ## Async/Await
 async/await는 JavaScript에서 비동기 코드를 작성하는 더 현대적이고 깔끔한 방법이다. async 함수는 항상 프로미스를 반환하며, await 키워드는 프로미스가 해결될 때까지 함수의 실행을 일시 중지한다. 
